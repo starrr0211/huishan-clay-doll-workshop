@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#d9b49a" />
+    <title>惠山泥人工坊 · 制作体验</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <section class="intro-screen" id="introScreen" aria-label="惠山泥人工坊引入页">
+      <button class="intro-enter" id="introEnter" type="button" aria-label="点击进入惠山泥人工坊首页">
+        <span class="intro-seal" aria-hidden="true">泥</span>
+        <strong>惠山泥人工坊</strong>
+        <small>一捧泥土 · 捏出人间欢喜</small>
+        <i>点击进入</i>
+      </button>
+    </section>
+
+    <main class="home-scene" id="homeScene" aria-label="惠山泥人工坊首页" hidden>
+      <div class="shelf-choices" aria-label="体验入口">
+        <button class="shelf-object shelf-book" id="openStorybook" type="button">
+          <span class="object-glow" aria-hidden="true"></span>
+          <img src="书.png" alt="《来自惠山的泥人》绘本" draggable="false" />
+          <span class="shelf-label"><b>翻阅绘本</b><small>读一读大阿福的故事</small></span>
+        </button>
+        <button class="shelf-object shelf-doll" id="openWorkshop" type="button">
+          <span class="object-glow" aria-hidden="true"></span>
+          <img src="泥人晒干 - 副本.png" alt="等待制作的大阿福泥人" draggable="false" />
+          <span class="shelf-label"><b>开始制作</b><small>亲手完成一尊大阿福</small></span>
+        </button>
+      </div>
+    </main>
+
+    <main class="workshop-shell" id="workshopShell" hidden>
+      <div class="workbench-base" aria-hidden="true"></div>
+      <div class="ambient-light ambient-light-one" aria-hidden="true"></div>
+      <div class="ambient-light ambient-light-two" aria-hidden="true"></div>
+
+      <header class="topbar">
+        <button class="brand" id="homeButton" type="button" aria-label="返回首页">
+          <span class="brand-mark" aria-hidden="true">⌂</span>
+          <span>
+            <strong>惠山泥人工坊</strong>
+            <small>一捧泥土 · 塑造美好</small>
+          </span>
+        </button>
+
+        <div class="top-actions" aria-label="工作台工具">
+          <button class="icon-button" id="saveButton" type="button"><span>▣</span><small>保存</small></button>
+          <button class="icon-button" id="exportButton" type="button"><span>↗</span><small>导出</small></button>
+          <button class="icon-button" id="soundButton" type="button" aria-pressed="false"><span>♫</span><small>声音</small></button>
+          <button class="icon-button" id="resetButton" type="button"><span>↻</span><small>重置</small></button>
+          <button class="icon-button" id="worksHistoryButton" type="button"><span>▤</span><small>作品记录</small></button>
+          <span class="heritage-seal">非遗传承<br /><b>指尖上的匠心</b></span>
+        </div>
+      </header>
+
+      <section class="left-panel glass-panel" aria-label="制作步骤">
+        <p class="panel-kicker">制作流程</p>
+        <ol class="step-list" id="stepList"></ol>
+        <div class="history-actions">
+          <button type="button" id="undoButton" title="撤销当前步骤的上一次操作">↶ <span>撤销</span></button>
+          <button type="button" id="redoButton" title="重新制作并返回第一步揉泥">↷ <span>重做</span></button>
+        </div>
+      </section>
+
+      <section class="stage-area" id="stageArea" aria-label="泥人制作区">
+        <div class="figure-shadow" aria-hidden="true"></div>
+        <div class="stage-note" id="stageNote">按住鼠标开始揉泥吧！</div>
+        <div class="mold-game" id="moldGame" hidden>
+          <div class="mold-target-outline" id="moldTargetOutline" aria-hidden="true">
+            <span>放置位置</span>
+          </div>
+          <img class="front-mold" id="frontMold" src="正面面膜具.png" alt="大阿福正面模具" />
+          <svg class="clay-fill-surface" id="clayFillSurface" viewBox="0 0 300 380" role="img" aria-label="按住泥土向四个方向拉伸，填满大阿福轮廓" hidden>
+            <defs>
+              <clipPath id="dafuSilhouette">
+                <ellipse cx="150" cy="230" rx="113" ry="137"></ellipse>
+                <ellipse cx="150" cy="116" rx="76" ry="82"></ellipse>
+                <circle cx="91" cy="87" r="43"></circle>
+                <circle cx="209" cy="87" r="43"></circle>
+              </clipPath>
+              <radialGradient id="clayGradient" cx="38%" cy="30%" r="72%">
+                <stop offset="0%" stop-color="#80675b"></stop>
+                <stop offset="62%" stop-color="#564138"></stop>
+                <stop offset="100%" stop-color="#382a25"></stop>
+              </radialGradient>
+            </defs>
+            <g clip-path="url(#dafuSilhouette)">
+              <rect id="claySpreadRect" x="122" y="172" width="56" height="56" rx="24" fill="url(#clayGradient)"></rect>
+            </g>
+            <g class="clay-silhouette-guide" aria-hidden="true">
+              <ellipse cx="150" cy="230" rx="113" ry="137"></ellipse>
+              <ellipse cx="150" cy="116" rx="76" ry="82"></ellipse>
+              <circle cx="91" cy="87" r="43"></circle>
+              <circle cx="209" cy="87" r="43"></circle>
+            </g>
+          </svg>
+          <div class="fill-directions" id="fillDirections" aria-hidden="true" hidden>
+            <span data-fill-direction="up">↑</span>
+            <span data-fill-direction="right">→</span>
+            <span data-fill-direction="down">↓</span>
+            <span data-fill-direction="left">←</span>
+          </div>
+          <button class="drag-piece clay-piece" id="clayPiece" type="button" aria-label="拖动泥坯放入正面模具">
+            <img src="泥土.png" alt="泥坯" draggable="false" />
+          </button>
+          <button class="drag-piece back-mold-piece" id="backMoldPiece" type="button" aria-label="拖动背面模具对齐定位线" hidden>
+            <img src="背面模具.png" alt="背面模具" draggable="false" />
+          </button>
+          <div class="magnet-hint" id="magnetHint" aria-live="polite">定位线靠近了，松开即可吸附</div>
+          <div class="mold-phase-badge" id="moldPhaseBadge">第 1 步 · 放入泥坯</div>
+        </div>
+        <div class="trim-game" id="trimGame" hidden>
+          <div class="trim-tool-rack" aria-label="修整工具">
+            <button class="trim-tool" id="scraperTool" type="button" aria-pressed="false">
+              <span class="scraper-icon" aria-hidden="true"><i></i></span>
+              <span>刮刀</span>
+            </button>
+          </div>
+          <div class="trim-figure" id="trimFigure">
+            <img class="trim-image trim-image-clean" src="泥人.png" alt="修整完成的大阿福" draggable="false" />
+            <img class="trim-image trim-image-rough" id="trimRoughImage" src="修整.png" alt="刚脱模、边缘带有溢泥的大阿福" draggable="false" />
+            <svg class="trim-guide" id="trimGuide" viewBox="0 0 1000 1240" role="img" aria-label="沿大阿福外轮廓的修整提示线">
+              <g class="trim-guide-base" aria-hidden="true">
+                <path d="M155 450 C175 270 300 145 500 140 C700 145 825 270 845 450"></path>
+                <path d="M845 450 C895 650 880 950 740 1100"></path>
+                <path d="M740 1100 C640 1215 360 1215 260 1100"></path>
+                <path d="M260 1100 C120 950 105 650 155 450"></path>
+              </g>
+              <g class="trim-guide-progress" aria-hidden="true">
+                <path data-trim-path="top" pathLength="100" d="M155 450 C175 270 300 145 500 140 C700 145 825 270 845 450"></path>
+                <path data-trim-path="right" pathLength="100" d="M845 450 C895 650 880 950 740 1100"></path>
+                <path data-trim-path="bottom" pathLength="100" d="M740 1100 C640 1215 360 1215 260 1100"></path>
+                <path data-trim-path="left" pathLength="100" d="M260 1100 C120 950 105 650 155 450"></path>
+              </g>
+            </svg>
+            <div class="trim-blade-cursor" id="trimBladeCursor" aria-hidden="true"><i></i></div>
+          </div>
+          <div class="trim-phase-badge" id="trimPhaseBadge">先从工具架选择刮刀</div>
+        </div>
+        <div class="figure-wrap" id="figureWrap">
+          <div class="figure-glow" aria-hidden="true"></div>
+          <div class="kneading-progress" id="kneadingProgress" hidden>
+            <div class="kneading-progress-head"><span>揉泥进度</span><strong id="kneadingProgressText">0%</strong></div>
+            <div class="kneading-track"><span id="kneadingBar"></span></div>
+          </div>
+          <div class="drying-progress" id="dryingProgress" hidden>
+            <div class="drying-progress-head">
+              <span>自然晾干中</span>
+              <strong id="dryingCountdown">5.0 秒</strong>
+            </div>
+            <div class="drying-track"><span id="dryingBar"></span></div>
+          </div>
+          <img id="stageImage" class="stage-image" src="揉泥/0.png" alt="当前制作阶段的惠山泥人素材" />
+          <img id="kneadingBlendImage" class="kneading-blend-image" src="揉泥/1.png" alt="" aria-hidden="true" />
+          <div class="paint-asset-layers" id="paintAssetLayers" aria-hidden="true" hidden>
+            <div class="paint-asset-layer" data-paint-layer="clothes"><img src="新建文件夹/衣服.png" alt="" /></div>
+            <div class="paint-asset-layer paint-pattern-layer" data-paint-pattern-layer><img src="新建文件夹/新建文件夹/花纹1.png" alt="" /></div>
+            <div class="paint-asset-layer" data-paint-layer="pants"><img src="新建文件夹/裤子1.png" alt="" /></div>
+            <div class="paint-asset-layer" data-paint-layer="fish"><img src="新建文件夹/怀抱物1.png" alt="" /></div>
+            <div class="paint-asset-layer" data-paint-layer="head"><img src="新建文件夹/脸带手.png" alt="" /></div>
+          </div>
+          <div class="paint-wash" id="paintWash" aria-hidden="true"></div>
+          <div class="figure-pattern" id="figurePattern" aria-hidden="true">如意</div>
+          <div class="figure-prop" id="figureProp" aria-hidden="true">✿</div>
+          <button class="eye-point" id="eyePoint" type="button" aria-label="为大阿福点睛" hidden></button>
+        </div>
+        <div class="clay-dust" id="clayDust" aria-hidden="true"></div>
+        <div class="gesture-cursor" id="gestureCursor" aria-hidden="true"></div>
+      </section>
+
+      <aside class="right-panel glass-panel" aria-live="polite">
+        <div class="current-step-line">
+          <span>当前步骤</span>
+          <strong id="stepCounter">1 / 5</strong>
+        </div>
+        <h1 id="stepTitle">揉泥</h1>
+        <div class="progress-track"><span id="progressBar"></span></div>
+        <p class="progress-text" id="progressText">0%</p>
+        <p class="task-copy" id="taskCopy"></p>
+        <div class="tip-card">
+          <span class="tip-icon" aria-hidden="true">♧</span>
+          <div><b>师傅提示</b><p id="tipCopy"></p></div>
+        </div>
+        <div class="interaction-hint" id="interactionHint"></div>
+        <div class="option-group" id="optionGroup"></div>
+      </aside>
+
+      <footer class="bottom-controls">
+        <button class="secondary-button" id="prevButton" type="button">← 返回上一步</button>
+        <div class="stage-status" id="stageStatus">准备开始</div>
+        <button class="primary-button" id="nextButton" type="button">进入下一步 →</button>
+      </footer>
+
+      <div class="patience-dialog" id="patienceDialog" role="dialog" aria-modal="true" aria-labelledby="patienceTitle" hidden>
+        <div class="patience-dialog-card">
+          <span class="patience-dialog-icon" aria-hidden="true">⌛</span>
+          <h2 id="patienceTitle">再耐心等一会儿</h2>
+          <p>制作泥人，只有慢慢来才能做好。</p>
+          <button class="primary-button" id="closePatienceDialog" type="button">知道了</button>
+        </div>
+      </div>
+
+      <div class="patience-dialog" id="paintErrorDialog" role="dialog" aria-modal="true" aria-labelledby="paintErrorTitle" hidden>
+        <div class="patience-dialog-card paint-error-card">
+          <span class="patience-dialog-icon" aria-hidden="true">↺</span>
+          <h2 id="paintErrorTitle">这个颜色不属于这里</h2>
+          <p id="paintErrorCopy">请把颜料拖到对应的部位。</p>
+          <button class="primary-button" id="closePaintErrorDialog" type="button">重新试试</button>
+        </div>
+      </div>
+
+      <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+      <section class="completion-card" id="completionCard" hidden>
+        <div class="completion-inner">
+          <button class="close-completion" id="closeCompletion" type="button" aria-label="关闭作品卡">×</button>
+          <p class="panel-kicker">惠山泥人小工坊 · 成品档案</p>
+          <div class="completion-art"><div class="completion-figure" id="completionFigure"><img id="completionImage" src="泥人晒干.png" alt="完成的大阿福作品" /></div></div>
+          <div class="completion-copy">
+            <p class="seal-label">匠心印记</p>
+            <h2>我的大阿福</h2>
+            <label>作品名称<input id="workName" type="text" maxlength="18" value="小小的祝福" /></label>
+            <label>一句话祝福<textarea id="workWish" rows="2" maxlength="48">愿家人平安喜乐，岁岁常欢。</textarea></label>
+            <label>制作者昵称<input id="makerName" type="text" maxlength="12" value="泥人学徒" /></label>
+            <button class="primary-button wide-button" id="finishButton" type="button">保存我的作品卡</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="works-history" id="worksHistory" role="dialog" aria-modal="true" aria-labelledby="worksHistoryTitle" hidden>
+        <div class="works-history-inner">
+          <div class="works-history-header">
+            <div>
+              <p class="panel-kicker">惠山泥人小工坊 · 成品档案</p>
+              <h2 id="worksHistoryTitle">我的作品记录</h2>
+            </div>
+            <button class="close-completion" id="closeWorksHistory" type="button" aria-label="关闭作品记录">×</button>
+          </div>
+          <div class="works-history-grid" id="worksHistoryGrid"></div>
+        </div>
+      </section>
+    </main>
+
+    <section class="storybook-view" id="storybookView" aria-label="绘本阅读" hidden>
+      <header class="storybook-header">
+        <div><small>惠山泥人文化绘本</small><strong>来自惠山的泥人</strong></div>
+      </header>
+      <div class="storybook-stage">
+        <article class="storybook-book" id="storybookBook">
+          <div class="storybook-art"><img id="storybookImage" src="书.png" alt="绘本插图" /></div>
+          <div class="storybook-copy">
+            <p id="storybookKicker">绘本封面</p>
+            <h2 id="storybookTitle">来自惠山的泥人</h2>
+            <div id="storybookText"></div>
+            <span class="storybook-page-number" id="storybookPageNumber">壹</span>
+          </div>
+        </article>
+      </div>
+      <footer class="storybook-controls">
+        <div class="storybook-toolbar" role="group" aria-label="绘本阅读控制">
+          <button id="storybookHome" type="button" aria-label="回到首页" title="回到首页"><span aria-hidden="true">⌂</span></button>
+          <i class="storybook-divider" aria-hidden="true"></i>
+          <button id="storybookPrev" type="button" aria-label="上一页" title="上一页"><span aria-hidden="true">‹</span></button>
+          <strong id="storybookCounter" aria-live="polite">1 / 4</strong>
+          <button id="storybookNext" type="button" aria-label="下一页" title="下一页"><span aria-hidden="true">›</span></button>
+          <i class="storybook-divider" aria-hidden="true"></i>
+          <button id="storybookTocButton" type="button" aria-label="打开目录" aria-expanded="false" aria-controls="storybookToc" title="目录"><span aria-hidden="true">▤</span></button>
+        </div>
+        <aside class="storybook-toc" id="storybookToc" aria-label="绘本目录" hidden>
+          <div class="storybook-toc-heading"><small>CONTENTS</small><strong>绘本目录</strong></div>
+          <div class="storybook-dots" id="storybookDots"></div>
+        </aside>
+      </footer>
+    </section>
+    <script src="app.js"></script>
+  </body>
+</html>
