@@ -37,13 +37,16 @@ const STORY_PAGES = [
   },
 ];
 const STORY_PAGE_NUMBERS = ["壹", "贰", "叁", "肆"];
-const STORY_IMAGE_PRELOADS = STORY_PAGES.map(({ image }) => {
+const storyImagePreloads = new Map();
+
+function preloadStoryImage(pageIndex) {
+  const page = STORY_PAGES[pageIndex];
+  if (!page || storyImagePreloads.has(page.image)) return;
   const preload = new Image();
   preload.decoding = "async";
-  preload.src = image;
-  preload.decode?.().catch(() => {});
-  return preload;
-});
+  preload.src = page.image;
+  storyImagePreloads.set(page.image, preload);
+}
 
 const stages = [
   {
@@ -161,6 +164,7 @@ let savedWorks = loadSavedWorks();
 let toastTimer;
 let dryingTimer;
 let paintAssetsReady = false;
+let paintAssetsPromise = null;
 const paintHitMasks = {};
 const paintPreparedAssets = {};
 let clothesMaskPixels = null;
@@ -281,6 +285,7 @@ function showExperienceView(view) {
   workshopShell.hidden = view !== "workshop";
   storybookView.hidden = view !== "storybook";
   document.body.dataset.view = view;
+  if (view === "workshop" && state.stage === 4) ensurePaintAssets();
 }
 
 function enterHomeFromIntro() {
@@ -321,6 +326,8 @@ function applyStoryNavigation() {
 }
 
 function applyStoryPage() {
+  preloadStoryImage(storyPageIndex);
+  preloadStoryImage(storyPageIndex + 1);
   applyStoryImage();
   applyStoryCopy();
   applyStoryNavigation();
@@ -689,6 +696,16 @@ async function preparePaintAssets() {
   }
 }
 
+function ensurePaintAssets() {
+  if (paintAssetsReady) return Promise.resolve();
+  if (!paintAssetsPromise) {
+    paintAssetsPromise = preparePaintAssets().finally(() => {
+      if (!paintAssetsReady) paintAssetsPromise = null;
+    });
+  }
+  return paintAssetsPromise;
+}
+
 function renderSteps() {
   stepList.innerHTML = stages.map((stage, index) => {
     const completed = index < state.stage || state.progress[index] >= 100;
@@ -1048,6 +1065,7 @@ function render() {
   renderPaintRegions();
   renderOptions();
   ensureDryingTimer();
+  if (state.stage === 4 && !workshopShell.hidden) ensurePaintAssets();
 }
 
 function showToast(message) {
@@ -1680,9 +1698,12 @@ function updateGestureCursor(event) {
 }
 
 function isClayPoint(event) {
-  if (state.stage !== 0 || state.progress[0] >= 100 || !stageImage.complete || !stageImage.naturalWidth) return false;
+  if (state.stage !== 0 || state.progress[0] >= 100) return false;
   const rect = stageImage.getBoundingClientRect();
-  const imageRatio = stageImage.naturalWidth / stageImage.naturalHeight;
+  if (!rect.width || !rect.height) return false;
+  const imageRatio = stageImage.naturalWidth && stageImage.naturalHeight
+    ? stageImage.naturalWidth / stageImage.naturalHeight
+    : 1;
   const boxRatio = rect.width / rect.height;
   const drawnWidth = imageRatio > boxRatio ? rect.width : rect.height * imageRatio;
   const drawnHeight = imageRatio > boxRatio ? rect.width / imageRatio : rect.height;
@@ -1691,6 +1712,8 @@ function isClayPoint(event) {
   const localX = event.clientX - rect.left - offsetX;
   const localY = event.clientY - rect.top - offsetY;
   if (localX < 0 || localY < 0 || localX >= drawnWidth || localY >= drawnHeight) return false;
+  if (kneadingDrag) return true;
+  if (!stageImage.complete || !stageImage.naturalWidth) return false;
   if (clayHitSource !== stageImage.currentSrc) {
     clayHitCanvas.width = stageImage.naturalWidth;
     clayHitCanvas.height = stageImage.naturalHeight;
@@ -1826,10 +1849,4 @@ document.addEventListener("keydown", (event) => {
   if (event.key.toLowerCase() === "s") saveState(true);
 });
 
-KNEADING_FRAMES.forEach((src) => {
-  const frame = new Image();
-  frame.src = src;
-});
-
 render();
-preparePaintAssets();

@@ -72,7 +72,7 @@
           <div class="mold-target-outline" id="moldTargetOutline" aria-hidden="true">
             <span>放置位置</span>
           </div>
-          <img class="front-mold" id="frontMold" src="正面面膜具.png" alt="大阿福正面模具" />
+          <img class="front-mold" id="frontMold" src="正面面膜具.png" alt="大阿福正面模具" loading="lazy" decoding="async" />
           <svg class="clay-fill-surface" id="clayFillSurface" viewBox="0 0 300 380" role="img" aria-label="按住泥土向四个方向拉伸，填满大阿福轮廓" hidden>
             <defs>
               <clipPath id="dafuSilhouette">
@@ -104,10 +104,10 @@
             <span data-fill-direction="left">←</span>
           </div>
           <button class="drag-piece clay-piece" id="clayPiece" type="button" aria-label="拖动泥坯放入正面模具">
-            <img src="泥土.png" alt="泥坯" draggable="false" />
+            <img src="泥土.png" alt="泥坯" draggable="false" loading="lazy" decoding="async" />
           </button>
           <button class="drag-piece back-mold-piece" id="backMoldPiece" type="button" aria-label="拖动背面模具对齐定位线" hidden>
-            <img src="背面模具.png" alt="背面模具" draggable="false" />
+            <img src="背面模具.png" alt="背面模具" draggable="false" loading="lazy" decoding="async" />
           </button>
           <div class="magnet-hint" id="magnetHint" aria-live="polite">定位线靠近了，松开即可吸附</div>
           <div class="mold-phase-badge" id="moldPhaseBadge">第 1 步 · 放入泥坯</div>
@@ -120,8 +120,8 @@
             </button>
           </div>
           <div class="trim-figure" id="trimFigure">
-            <img class="trim-image trim-image-clean" src="泥人.png" alt="修整完成的大阿福" draggable="false" />
-            <img class="trim-image trim-image-rough" id="trimRoughImage" src="修整.png" alt="刚脱模、边缘带有溢泥的大阿福" draggable="false" />
+            <img class="trim-image trim-image-clean" src="泥人.png" alt="修整完成的大阿福" draggable="false" loading="lazy" decoding="async" />
+            <img class="trim-image trim-image-rough" id="trimRoughImage" src="修整.png" alt="刚脱模、边缘带有溢泥的大阿福" draggable="false" loading="lazy" decoding="async" />
             <svg class="trim-guide" id="trimGuide" viewBox="0 0 1000 1240" role="img" aria-label="沿大阿福外轮廓的修整提示线">
               <g class="trim-guide-base" aria-hidden="true">
                 <path d="M155 450 C175 270 300 145 500 140 C700 145 825 270 845 450"></path>
@@ -156,11 +156,11 @@
           <img id="stageImage" class="stage-image" src="揉泥/0.png" alt="当前制作阶段的惠山泥人素材" />
           <img id="kneadingBlendImage" class="kneading-blend-image" src="揉泥/1.png" alt="" aria-hidden="true" />
           <div class="paint-asset-layers" id="paintAssetLayers" aria-hidden="true" hidden>
-            <div class="paint-asset-layer" data-paint-layer="clothes"><img src="新建文件夹/衣服.png" alt="" /></div>
-            <div class="paint-asset-layer paint-pattern-layer" data-paint-pattern-layer><img src="新建文件夹/新建文件夹/花纹1.png" alt="" /></div>
-            <div class="paint-asset-layer" data-paint-layer="pants"><img src="新建文件夹/裤子1.png" alt="" /></div>
-            <div class="paint-asset-layer" data-paint-layer="fish"><img src="新建文件夹/怀抱物1.png" alt="" /></div>
-            <div class="paint-asset-layer" data-paint-layer="head"><img src="新建文件夹/脸带手.png" alt="" /></div>
+            <div class="paint-asset-layer" data-paint-layer="clothes"><img alt="" /></div>
+            <div class="paint-asset-layer paint-pattern-layer" data-paint-pattern-layer><img alt="" /></div>
+            <div class="paint-asset-layer" data-paint-layer="pants"><img alt="" /></div>
+            <div class="paint-asset-layer" data-paint-layer="fish"><img alt="" /></div>
+            <div class="paint-asset-layer" data-paint-layer="head"><img alt="" /></div>
           </div>
           <div class="paint-wash" id="paintWash" aria-hidden="true"></div>
           <div class="figure-pattern" id="figurePattern" aria-hidden="true">如意</div>
@@ -218,7 +218,7 @@
         <div class="completion-inner">
           <button class="close-completion" id="closeCompletion" type="button" aria-label="关闭作品卡">×</button>
           <p class="panel-kicker">惠山泥人小工坊 · 成品档案</p>
-          <div class="completion-art"><div class="completion-figure" id="completionFigure"><img id="completionImage" src="泥人晒干.png" alt="完成的大阿福作品" /></div></div>
+          <div class="completion-art"><div class="completion-figure" id="completionFigure"><img id="completionImage" alt="完成的大阿福作品" /></div></div>
           <div class="completion-copy">
             <p class="seal-label">匠心印记</p>
             <h2>我的大阿福</h2>
@@ -250,7 +250,7 @@
       </header>
       <div class="storybook-stage">
         <article class="storybook-book" id="storybookBook">
-          <div class="storybook-art"><img id="storybookImage" src="书.png" alt="绘本插图" /></div>
+          <div class="storybook-art"><img id="storybookImage" src="书.png" alt="绘本插图" decoding="async" /></div>
           <div class="storybook-copy">
             <p id="storybookKicker">绘本封面</p>
             <h2 id="storybookTitle">来自惠山的泥人</h2>
