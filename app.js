@@ -2,29 +2,29 @@ const STORAGE_KEY = "huishan-clay-workshop";
 const WORKS_STORAGE_KEY = "huishan-clay-workshop-saved-works";
 const DRYING_DURATION = 5000;
 const KNEADING_FRAMES = [
-  "揉泥/0.png",
-  "揉泥/1.png",
-  "揉泥/2.png",
-  "揉泥/3.png",
-  "揉泥/4.png",
-  "揉泥/5.png",
-  "揉泥/6.png",
+  "assets/kneading-0.webp",
+  "assets/kneading-1.webp",
+  "assets/kneading-2.webp",
+  "assets/kneading-3.webp",
+  "assets/kneading-4.webp",
+  "assets/kneading-5.webp",
+  "assets/kneading-6.webp",
 ];
 const STORY_PAGES = [
   {
-    image: "书.png",
+    image: "assets/book-cover.webp",
     kicker: "绘本封面",
     title: "来自惠山的泥人",
     text: "<p>江南惠山脚下，泥土经过一双双巧手，变成了笑意盈盈的大阿福。</p><blockquote>翻开绘本，听泥土讲述自己的故事。</blockquote>",
   },
   {
-    image: "揉泥/1.png",
+    image: "assets/kneading-1.webp",
     kicker: "第一章 · 一捧泥土",
     title: "揉出细腻与柔韧",
     text: "<p>做泥人先要揉泥。反复按压、推揉，把空气赶出去，让泥料细腻柔软。</p><p>这一步看似简单，却决定了泥人能否牢固成形。</p>",
   },
   {
-    image: "泥人晒干 - 副本.png",
+    image: "assets/home-doll.webp",
     kicker: "第二章 · 模印成形",
     title: "从模具里诞生",
     text: "<p>泥料填进模具，轻轻压实，再经过脱模和修整，大阿福的笑脸渐渐清晰。</p><p>晾干之后，它便拥有了承载色彩的身体。</p>",
@@ -38,6 +38,18 @@ const STORY_PAGES = [
 ];
 const STORY_PAGE_NUMBERS = ["壹", "贰", "叁", "肆"];
 const storyImagePreloads = new Map();
+const kneadingFramePreloads = new Map();
+
+function preloadKneadingFrames() {
+  KNEADING_FRAMES.forEach((source) => {
+    if (kneadingFramePreloads.has(source)) return;
+    const image = new Image();
+    image.decoding = "async";
+    image.src = source;
+    image.decode?.().catch(() => {});
+    kneadingFramePreloads.set(source, image);
+  });
+}
 
 function preloadStoryImage(pageIndex) {
   const page = STORY_PAGES[pageIndex];
@@ -285,6 +297,7 @@ function showExperienceView(view) {
   workshopShell.hidden = view !== "workshop";
   storybookView.hidden = view !== "storybook";
   document.body.dataset.view = view;
+  if (view === "workshop" && state.stage === 0) preloadKneadingFrames();
   if (view === "workshop" && state.stage === 4) ensurePaintAssets();
 }
 
@@ -293,6 +306,8 @@ function enterHomeFromIntro() {
   homeScene.hidden = false;
   document.body.dataset.view = "home";
   introScreen.classList.add("is-leaving");
+  const schedulePreload = window.requestIdleCallback || ((callback) => window.setTimeout(callback, 250));
+  schedulePreload(preloadKneadingFrames);
   window.setTimeout(() => {
     introScreen.hidden = true;
     introScreen.classList.remove("is-leaving");
