@@ -10,6 +10,11 @@ const KNEADING_FRAMES = [
   "assets/kneading-5.webp",
   "assets/kneading-6.webp",
 ];
+const MOLD_ASSETS = {
+  front: "assets/front-mold.webp",
+  clay: "assets/clay-piece.webp",
+  back: "assets/back-mold.webp",
+};
 const STORY_PAGES = [
   {
     image: "assets/book-cover.webp",
@@ -39,6 +44,7 @@ const STORY_PAGES = [
 const STORY_PAGE_NUMBERS = ["壹", "贰", "叁", "肆"];
 const storyImagePreloads = new Map();
 const kneadingFramePreloads = new Map();
+const moldAssetPreloads = new Map();
 
 function preloadKneadingFrames() {
   KNEADING_FRAMES.forEach((source) => {
@@ -48,6 +54,17 @@ function preloadKneadingFrames() {
     image.src = source;
     image.decode?.().catch(() => {});
     kneadingFramePreloads.set(source, image);
+  });
+}
+
+function preloadMoldAssets() {
+  Object.values(MOLD_ASSETS).forEach((source) => {
+    if (moldAssetPreloads.has(source)) return;
+    const image = new Image();
+    image.decoding = "async";
+    image.src = source;
+    image.decode?.().catch(() => {});
+    moldAssetPreloads.set(source, image);
   });
 }
 
@@ -72,7 +89,7 @@ const stages = [
   },
   {
     name: "翻模",
-    image: "正面面膜具.png",
+    image: MOLD_ASSETS.front,
     task: "请将泥坯放入模具，并让模具的定位线对齐。",
     tip: "先让泥土填满正面模具，再对齐背面模具。",
     hint: "拖动泥土，使泥填满正面模具",
@@ -297,7 +314,10 @@ function showExperienceView(view) {
   workshopShell.hidden = view !== "workshop";
   storybookView.hidden = view !== "storybook";
   document.body.dataset.view = view;
-  if (view === "workshop" && state.stage === 0) preloadKneadingFrames();
+  if (view === "workshop") {
+    preloadMoldAssets();
+    if (state.stage === 0) preloadKneadingFrames();
+  }
   if (view === "workshop" && state.stage === 4) ensurePaintAssets();
 }
 
@@ -307,7 +327,10 @@ function enterHomeFromIntro() {
   document.body.dataset.view = "home";
   introScreen.classList.add("is-leaving");
   const schedulePreload = window.requestIdleCallback || ((callback) => window.setTimeout(callback, 250));
-  schedulePreload(preloadKneadingFrames);
+  schedulePreload(() => {
+    preloadKneadingFrames();
+    preloadMoldAssets();
+  });
   window.setTimeout(() => {
     introScreen.hidden = true;
     introScreen.classList.remove("is-leaving");
