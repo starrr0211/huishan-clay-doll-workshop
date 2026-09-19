@@ -15,6 +15,11 @@ const MOLD_ASSETS = {
   clay: "assets/clay-piece.webp",
   back: "assets/back-mold.webp",
 };
+const LATE_STAGE_ASSETS = {
+  trimRough: "assets/trim-rough.webp",
+  clayFigure: "assets/clay-figure.webp",
+  dryFigure: "assets/clay-figure-dry.webp",
+};
 const STORY_PAGES = [
   {
     image: "assets/book-cover.webp",
@@ -45,6 +50,7 @@ const STORY_PAGE_NUMBERS = ["壹", "贰", "叁", "肆"];
 const storyImagePreloads = new Map();
 const kneadingFramePreloads = new Map();
 const moldAssetPreloads = new Map();
+const lateStageAssetPreloads = new Map();
 
 function preloadKneadingFrames() {
   KNEADING_FRAMES.forEach((source) => {
@@ -65,6 +71,17 @@ function preloadMoldAssets() {
     image.src = source;
     image.decode?.().catch(() => {});
     moldAssetPreloads.set(source, image);
+  });
+}
+
+function preloadLateStageAssets() {
+  Object.values(LATE_STAGE_ASSETS).forEach((source) => {
+    if (lateStageAssetPreloads.has(source)) return;
+    const image = new Image();
+    image.decoding = "async";
+    image.src = source;
+    image.decode?.().catch(() => {});
+    lateStageAssetPreloads.set(source, image);
   });
 }
 
@@ -97,8 +114,8 @@ const stages = [
   },
   {
     name: "脱模与修整",
-    image: "修整.png",
-    doneImage: "泥人.png",
+    image: LATE_STAGE_ASSETS.trimRough,
+    doneImage: LATE_STAGE_ASSETS.clayFigure,
     task: "刚脱模的大阿福边缘还有溢出的泥料，请先选择刮刀。",
     tip: "刮刀要贴着外轮廓移动，避免碰到泥人的细节。",
     hint: "选择左侧刮刀后，沿橙色提示线按住滑动",
@@ -106,8 +123,8 @@ const stages = [
   },
   {
     name: "晾干",
-    image: "泥人.png",
-    doneImage: "泥人晒干.png",
+    image: LATE_STAGE_ASSETS.clayFigure,
+    doneImage: LATE_STAGE_ASSETS.dryFigure,
     task: "让成型的泥人慢慢晾干，等待颜色和纹样登场。",
     tip: "自然晾干能让泥人的形体更稳定，耐心也是工艺的一部分。",
     hint: "点击“开始晾干”，等待光尘落下",
@@ -115,7 +132,7 @@ const stages = [
   },
   {
     name: "上色",
-    image: "泥人晒干.png",
+    image: LATE_STAGE_ASSETS.dryFigure,
     task: "依次选择脸部、衣服、怀抱物、裤子和鞋子，再将对应颜料拖到正确部位。",
     tip: "按住右侧颜料块拖动；放错位置时不会上色，可以重新尝试。",
     hint: "先选部位，再把对应颜料拖到泥人轮廓上",
@@ -157,6 +174,26 @@ const paintPatterns = [
 ];
 
 const CLOTHES_MASK_ASSET = "新建文件夹/衣服部分.png";
+const CLOTHES_MASK_SOURCE = "assets/paint-clothes-custom.webp";
+const PAINT_PREPARED_ASSETS = {
+  "新建文件夹/脸带手.png": "assets/paint-head.webp",
+  "新建文件夹/衣服.png": "assets/paint-clothes-blue.webp",
+  "新建文件夹/衣服橙色.png": "assets/paint-clothes-yellow.webp",
+  "新建文件夹/衣服粉色.png": "assets/paint-clothes-pink.webp",
+  "新建文件夹/怀抱物1.png": "assets/paint-fish.webp",
+  "新建文件夹/裤子1.png": "assets/paint-pants-red.webp",
+  "新建文件夹/黑色裤子.png": "assets/paint-pants-black.webp",
+  "新建文件夹/绿色裤子.png": "assets/paint-pants-green.webp",
+  "新建文件夹/新建文件夹/花纹1.png": "assets/paint-pattern-flower.webp",
+  "新建文件夹/新建文件夹/团鹤纹路1.png": "assets/paint-pattern-crane.webp",
+  "新建文件夹/新建文件夹/寿纹1.png": "assets/paint-pattern-longevity.webp",
+};
+const PAINT_MASK_ASSETS = {
+  head: "assets/paint-mask-head.webp",
+  clothes: "assets/paint-mask-clothes.webp",
+  fish: "assets/paint-mask-fish.webp",
+  pants: "assets/paint-mask-pants.webp",
+};
 
 const defaultState = {
   stage: 0,
@@ -316,6 +353,7 @@ function showExperienceView(view) {
   document.body.dataset.view = view;
   if (view === "workshop") {
     preloadMoldAssets();
+    preloadLateStageAssets();
     if (state.stage === 0) preloadKneadingFrames();
   }
   if (view === "workshop" && state.stage === 4) ensurePaintAssets();
@@ -629,24 +667,10 @@ async function prepareClothesTint(color) {
 
 async function preparePaintAssets() {
   try {
-    const baseImage = new Image();
-    baseImage.src = stages[4].image;
-    await loadPaintImage(baseImage);
-    await baseImage.decode?.().catch(() => {});
-    const baseCanvas = document.createElement("canvas");
-    baseCanvas.width = baseImage.naturalWidth;
-    baseCanvas.height = baseImage.naturalHeight;
-    const baseContext = baseCanvas.getContext("2d", { willReadFrequently: true });
-    baseContext.drawImage(baseImage, 0, 0);
-    const basePixels = baseContext.getImageData(0, 0, baseCanvas.width, baseCanvas.height).data;
-
     const clothesMaskImage = new Image();
-    clothesMaskImage.src = CLOTHES_MASK_ASSET;
+    clothesMaskImage.src = CLOTHES_MASK_SOURCE;
     await loadPaintImage(clothesMaskImage);
     await clothesMaskImage.decode?.().catch(() => {});
-    if (clothesMaskImage.naturalWidth !== baseCanvas.width || clothesMaskImage.naturalHeight !== baseCanvas.height) {
-      throw new Error(`${CLOTHES_MASK_ASSET}与泥人底图尺寸不一致`);
-    }
     const clothesMaskCanvas = document.createElement("canvas");
     clothesMaskCanvas.width = clothesMaskImage.naturalWidth;
     clothesMaskCanvas.height = clothesMaskImage.naturalHeight;
@@ -656,75 +680,31 @@ async function preparePaintAssets() {
     clothesMaskWidth = clothesMaskCanvas.width;
     clothesMaskHeight = clothesMaskCanvas.height;
 
-    await Promise.all(Object.entries(paintParts).map(async ([part, config]) => {
-      const combinedAlpha = new Uint8ClampedArray(baseCanvas.width * baseCanvas.height);
-      for (const variant of config.variants) {
-        const image = new Image();
-        image.src = variant.asset;
-        await loadPaintImage(image);
-        await image.decode?.().catch(() => {});
-
-        const canvas = document.createElement("canvas");
-        canvas.width = image.naturalWidth;
-        canvas.height = image.naturalHeight;
-        if (canvas.width !== baseCanvas.width || canvas.height !== baseCanvas.height) {
-          throw new Error(`${variant.asset}与泥人底图尺寸不一致`);
-        }
-        const context = canvas.getContext("2d", { willReadFrequently: true });
-        context.drawImage(image, 0, 0);
-        const pixels = context.getImageData(0, 0, canvas.width, canvas.height);
-        for (let pixel = 0, maskIndex = 0; pixel < pixels.data.length; pixel += 4, maskIndex += 1) {
-          const difference = Math.max(
-            Math.abs(pixels.data[pixel] - basePixels[pixel]),
-            Math.abs(pixels.data[pixel + 1] - basePixels[pixel + 1]),
-            Math.abs(pixels.data[pixel + 2] - basePixels[pixel + 2]),
-          );
-          const keep = pixels.data[pixel + 3] >= 24 && basePixels[pixel + 3] >= 24 && difference >= 12;
-          if (!keep) pixels.data[pixel + 3] = 0;
-          if (keep) combinedAlpha[maskIndex] = 255;
-        }
-        context.putImageData(pixels, 0, 0);
-        const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/png"));
-        if (!blob) throw new Error(`无法处理${variant.asset}`);
-        paintPreparedAssets[variant.asset] = URL.createObjectURL(blob);
-      }
-      if (part === "clothes") {
-        for (let maskIndex = 0; maskIndex < combinedAlpha.length; maskIndex += 1) {
-          if (clothesMaskPixels[maskIndex * 4 + 3] >= 24) combinedAlpha[maskIndex] = 255;
-        }
-      }
-      paintHitMasks[part] = { width: baseCanvas.width, height: baseCanvas.height, alpha: combinedAlpha };
-    }));
-    await Promise.all(paintPatterns.map(async (pattern) => {
+    await Promise.all(Object.entries(PAINT_MASK_ASSETS).map(async ([part, source]) => {
       const image = new Image();
-      image.src = pattern.asset;
+      image.src = source;
       await loadPaintImage(image);
       await image.decode?.().catch(() => {});
-
       const canvas = document.createElement("canvas");
       canvas.width = image.naturalWidth;
       canvas.height = image.naturalHeight;
-      if (canvas.width !== baseCanvas.width || canvas.height !== baseCanvas.height) {
-        throw new Error(`${pattern.asset}与泥人底图尺寸不一致`);
-      }
       const context = canvas.getContext("2d", { willReadFrequently: true });
       context.drawImage(image, 0, 0);
-      const pixels = context.getImageData(0, 0, canvas.width, canvas.height);
-      for (let pixel = 0; pixel < pixels.data.length; pixel += 4) {
-        const difference = Math.max(
-          Math.abs(pixels.data[pixel] - basePixels[pixel]),
-          Math.abs(pixels.data[pixel + 1] - basePixels[pixel + 1]),
-          Math.abs(pixels.data[pixel + 2] - basePixels[pixel + 2]),
-        );
-        const keep = pixels.data[pixel + 3] >= 24 && basePixels[pixel + 3] >= 24 && difference >= 12;
-        if (!keep) pixels.data[pixel + 3] = 0;
+      const pixels = context.getImageData(0, 0, canvas.width, canvas.height).data;
+      const alpha = new Uint8ClampedArray(canvas.width * canvas.height);
+      for (let pixel = 3, index = 0; pixel < pixels.length; pixel += 4, index += 1) {
+        alpha[index] = pixels[pixel];
       }
-      context.putImageData(pixels, 0, 0);
-      const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/png"));
-      if (!blob) throw new Error(`无法处理${pattern.asset}`);
-      paintPreparedAssets[pattern.asset] = URL.createObjectURL(blob);
+      paintHitMasks[part] = { width: canvas.width, height: canvas.height, alpha };
     }));
-    await prepareClothesTint(state.clothesColor);
+    await Promise.all(Object.entries(PAINT_PREPARED_ASSETS).map(async ([asset, source]) => {
+      const image = new Image();
+      image.src = source;
+      await loadPaintImage(image);
+      await image.decode?.().catch(() => {});
+      paintPreparedAssets[asset] = source;
+    }));
+    if (state.paintAreas.clothes === CLOTHES_MASK_ASSET) await prepareClothesTint(state.clothesColor);
     paintAssetsReady = true;
     paintAssetLayers.classList.add("assets-ready");
     render();
@@ -1103,7 +1083,7 @@ function render() {
   renderPaintRegions();
   renderOptions();
   ensureDryingTimer();
-  if (state.stage === 4 && !workshopShell.hidden) ensurePaintAssets();
+  if (state.stage >= 3 && !workshopShell.hidden) ensurePaintAssets();
 }
 
 function showToast(message) {
